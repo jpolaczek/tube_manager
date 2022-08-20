@@ -15,12 +15,14 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-support (3.10.2)
+    sqlite3 (1.4.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   rspec
+  sqlite3
 
 RUBY VERSION
    ruby 3.0.2p107

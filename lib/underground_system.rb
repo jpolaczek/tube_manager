@@ -1,5 +1,8 @@
+
 class UndergroundSystem
-  def initialize; end
+  def initialize(db)
+    @db = db
+  end
 
   def check_in(id, station_name, time)
   end
@@ -9,4 +12,8 @@ class UndergroundSystem
 
   def get_average_time(start_station, end_station)
   end
+
+  private
+  
+  attr_reader :db
 end
