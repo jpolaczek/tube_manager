@@ -1,5 +1,5 @@
-
-require 'repositories/checkin'
+require "#{$root}/lib/repositories/check_in"
+require "#{$root}/lib/validators/check_in"
 
 class UndergroundSystem
   def initialize(db)
@@ -7,7 +7,7 @@ class UndergroundSystem
   end
 
   def check_in(id, station_name, time)
-    checkin_validator.call!(id, station_name, time)
+    return unless checkin_validator.valid?(id, station_name, time, checkin_repository.find_unfinished_checkin(id))
     checkin_repository.create(id, station_name, time)
   end
 

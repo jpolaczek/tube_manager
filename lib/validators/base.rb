@@ -1,9 +1,5 @@
 module Validators
     class Base
-        def call!(*args)
-            raise error unless valid?
-        end
-
         private
 
         def valid_integer?(val)
