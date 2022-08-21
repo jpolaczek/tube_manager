@@ -7,6 +7,7 @@ RSpec.describe Validators::CheckIn do
 
     describe '#valid?' do
         subject { validator.valid?(id, station_name, time) }
+        
         let(:id) { 1 }
         let(:station_name) { 'Sevilla' }
         let(:time) { 2 }

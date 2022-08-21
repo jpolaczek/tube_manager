@@ -4,7 +4,7 @@ module Validators
 
         def valid_integer?(val)
             begin
-                Integer(val)
+                !!Integer(val)
             rescue TypeError, ArgumentError
                 false
             end   

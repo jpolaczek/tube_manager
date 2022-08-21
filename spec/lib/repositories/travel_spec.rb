@@ -6,21 +6,22 @@ require "#{$root}/lib/repositories/check_in"
 require "#{$root}/lib/repositories/travel"
 
 RSpec.describe Repositories::Travel do
+    before do
+        db.execute('DELETE FROM checkouts')
+        db.execute('DELETE FROM checkins')
+    end
+    
+    after do
+        db.execute('DELETE FROM checkouts')
+        db.execute('DELETE FROM checkins')
+    end
+
     let(:db) { SQLite3::Database.open 'tech_tests_spec.db' }
     let(:travel_repo) { Repositories::Travel.new(db) }
     let(:checkin_repo) { Repositories::CheckIn.new(db) }
     let(:checkout_repo) { Repositories::CheckOut.new(db) }
 
-    before do
-        db.execute("DELETE FROM checkouts;")
-        db.execute("DELETE FROM checkins;")
-    end
-    after do
-        db.execute("DELETE FROM checkouts;")
-        db.execute("DELETE FROM checkins;")
-    end
-
-    describe "#create" do
+    describe '#create' do
         subject { travel_repo.get_average_time_for_stations('Madrid', 'Valencia') }
 
         context 'when given travel exists' do
@@ -31,8 +32,7 @@ RSpec.describe Repositories::Travel do
                 checkin_repo.create(3, 'Madrid', 3, checkout_repo.create(3, 'Barcelona', 19))
             end
 
-
-            it "should return the average travel time" do
+            it 'should return the average travel time' do
                 expect(subject).to eq(13)
             end
         end
@@ -45,8 +45,7 @@ RSpec.describe Repositories::Travel do
                 checkin_repo.create(3, 'Madrid', 3, checkout_repo.create(3, 'Barcelona', 19))
             end
 
-
-            it "should return the average travel time" do
+            it 'should return the average travel time' do
                 expect(subject).to eq(14.5)
             end
         end
@@ -57,12 +56,12 @@ RSpec.describe Repositories::Travel do
                 checkin_repo.create(3, 'Madrid', 3, checkout_repo.create(3, 'Barcelona', 19))
             end
 
-            it "should return the average travel time" do
+            it 'should return the average travel time' do
                 expect(subject).to eq(nil)
             end
 
             context 'when no travel exists' do
-                it "should return the average travel time" do
+                it 'should return the average travel time' do
                     expect(subject).to eq(nil)
                 end
             end
