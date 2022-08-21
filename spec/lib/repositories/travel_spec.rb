@@ -57,9 +57,14 @@ RSpec.describe Repositories::Travel do
                 checkin_repo.create(3, 'Madrid', 3, checkout_repo.create(3, 'Barcelona', 19))
             end
 
-
             it "should return the average travel time" do
                 expect(subject).to eq(nil)
+            end
+
+            context 'when no travel exists' do
+                it "should return the average travel time" do
+                    expect(subject).to eq(nil)
+                end
             end
         end
     end

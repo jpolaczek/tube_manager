@@ -1,16 +1,20 @@
 require './lib/underground_system'
 require 'sqlite3'
+require "#{$root}/lib/repositories/travel"
 
 RSpec.describe UndergroundSystem do
-  let(:db) { SQLite3::Database.open 'tech_tests_spec.db' }
-  let(:tube) { described_class.new(db) }
+  let(:db)            { SQLite3::Database.open 'tech_tests_spec.db' }
+  let(:tube)          { described_class.new(db) }
+  let(:checkin_repo)  { Repositories::CheckIn.new(db) }
+  let(:begin_station) { 'Layton' }
+  let(:end_station)   { 'Madrid' }
 
   before { db.execute("DELETE FROM checkins;") }
   after  { db.execute("DELETE FROM checkins;") }
-  let(:checkin_repo) { Repositories::CheckIn.new(db) }
+  
 
   describe '#check_in' do
-    subject { tube.check_in(45, 'Layton', 3 ) }
+    subject { tube.check_in(45, begin_station, 3 ) }
 
     it 'saves a checkin to database' do
       subject
@@ -24,7 +28,7 @@ RSpec.describe UndergroundSystem do
     end
 
     context 'when closed checkin already exists for user' do
-      before { checkin_repo.create(45, 'madrid', 3, 1) }
+      before { checkin_repo.create(45, begin_station, 3, 1) }
 
       it 'saves a checkin to database' do
         subject
@@ -34,12 +38,12 @@ RSpec.describe UndergroundSystem do
               SELECT user_id, city, time FROM checkins
             "
           ).last
-        ).to eq [45, 'Layton', 3]
+        ).to eq [45, begin_station, 3]
       end
     end
 
     context 'when open checkin already exists for user' do
-      before { checkin_repo.create(45, 'Layton', 3) }
+      before { checkin_repo.create(45, begin_station, 3) }
 
       it 'does not save a checkin to database' do
         expect { subject }.to_not change { db.execute("SELECT user_id, city, time FROM checkins").count }.from(1)
@@ -50,10 +54,10 @@ RSpec.describe UndergroundSystem do
   describe '#check_out' do
     before  do
       db.execute("DELETE FROM checkouts;") 
-      checkin_repo.create(1, 'Madrid', 2,)
+      checkin_repo.create(1, begin_station, 2,)
     end
     after { db.execute("DELETE FROM checkouts;") }
-    subject { tube.check_out(1, 'Layton', 3) }
+    subject { tube.check_out(1, end_station, 3) }
 
     let(:checkin_id) { checkin_repo.find_unfinished_checkin(1) }
     let(:last_checkout_id) { db.execute("SELECT id FROM checkouts ASC")&.last&.last }
@@ -68,8 +72,24 @@ RSpec.describe UndergroundSystem do
       expect { subject }.to change { db.execute("SELECT id FROM checkouts").count }
           .from(0).to(1)
       expect(db.execute("SELECT city, user_id, time FROM checkouts")).to eq(
-          [['Layton', 1, 3]]
+          [[end_station, 1, 3]]
       )
+    end
+  end
+
+  describe '#get_average_time' do
+    subject { tube.get_average_time(begin_station, end_station)}
+
+    before do
+      allow(Repositories::Travel).to receive(:new).with(db).and_return(travel_repo)
+      allow(travel_repo).to receive(:get_average_time_for_stations).with(begin_station, end_station).and_return(average_time)
+    end
+
+    let(:travel_repo)  { double 'travel_repo' }
+    let(:average_time) { 17.5 }
+
+    it 'calls the travel repository with correct data' do
+      expect(subject).to eq average_time
     end
   end
 end

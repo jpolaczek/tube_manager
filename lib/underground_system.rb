@@ -9,12 +9,12 @@ class UndergroundSystem
 
   def check_in(id, station_name, time)
     return unless checkin_validator.valid?(id, station_name, time, checkin_repository.find_unfinished_checkin(id))
+    
     checkin_repository.create(id, station_name, time)
   end
 
   def check_out(id, station_name, time)
-    unfinishied_checkin_id = checkin_repository.find_unfinished_checkin(id)
-    return unless unfinishied_checkin_id
+    return unless unfinishied_checkin_id = checkin_repository.find_unfinished_checkin(id)
 
     checkin_repository.update_checkin(
       unfinishied_checkin_id,
@@ -23,6 +23,7 @@ class UndergroundSystem
   end
 
   def get_average_time(start_station, end_station)
+    travel_repository.get_average_time_for_stations(start_station, end_station)
   end
 
   private
@@ -37,6 +38,10 @@ class UndergroundSystem
 
   def checkin_validator
     @checkin_validator ||= Validators::CheckIn.new
+  end
+
+  def travel_repository
+    @travel_repository ||= Repositories::Travel.new(db)
   end
   
   attr_reader :db
