@@ -1,5 +1,6 @@
 require "#{$root}/lib/repositories/check_in"
 require "#{$root}/lib/validators/check_in"
+require "#{$root}/lib/repositories/check_out"
 
 class UndergroundSystem
   def initialize(db)
@@ -12,6 +13,13 @@ class UndergroundSystem
   end
 
   def check_out(id, station_name, time)
+    unfinishied_checkin_id = checkin_repository.find_unfinished_checkin(id)
+    return unless unfinishied_checkin_id
+
+    checkin_repository.update_checkin(
+      unfinishied_checkin_id,
+      checkout_repository.create(id, station_name, time)
+    )
   end
 
   def get_average_time(start_station, end_station)
@@ -20,7 +28,11 @@ class UndergroundSystem
   private
 
   def checkin_repository
-    Repositories::CheckIn.new(db)
+    @checkin_repository ||= Repositories::CheckIn.new(db)
+  end
+
+  def checkout_repository
+    @checkout_repository ||= Repositories::CheckOut.new(db)
   end
 
   def checkin_validator

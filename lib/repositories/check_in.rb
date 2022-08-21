@@ -23,5 +23,15 @@ module Repositories
         ", user_id
       )&.last&.last
     end
+
+    def update_checkin(checkin_id, checkout_id)
+      db.execute(
+        " 
+          UPDATE checkins
+          SET checkout_id = ?
+          WHERE id = ?;
+        ", checkout_id, checkin_id
+      )  
+    end
   end
 end
