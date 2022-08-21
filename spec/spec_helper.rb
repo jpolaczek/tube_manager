@@ -99,5 +99,4 @@ RSpec.configure do |config|
 =end
 end
 $root = Dir.pwd
-
 require 'byebug'

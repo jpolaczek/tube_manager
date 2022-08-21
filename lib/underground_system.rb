@@ -1,6 +1,7 @@
 require "#{$root}/lib/repositories/check_in"
 require "#{$root}/lib/validators/check_in"
 require "#{$root}/lib/repositories/check_out"
+require "#{$root}/lib/repositories/travel"
 
 class UndergroundSystem
   def initialize(db)
