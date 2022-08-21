@@ -1,10 +1,10 @@
-require './lib/underground_system'
+require "#{$root}/lib/underground_system"
 require 'sqlite3'
 require "#{$root}/lib/repositories/travel"
 
 RSpec.describe UndergroundSystem do
-  before { db.execute("DELETE FROM checkins") }
-  after  { db.execute("DELETE FROM checkins") }
+  before { db.execute('DELETE FROM checkins') }
+  after  { db.execute('DELETE FROM checkins') }
 
   let(:db)            { SQLite3::Database.open 'tech_tests_spec.db' }
   let(:tube)          { described_class.new(db) }
@@ -90,7 +90,7 @@ RSpec.describe UndergroundSystem do
     let(:average_time) { 17.5 }
 
     it 'calls the travel repository with correct data' do
-      expect(subject).to eq average_time
+      expect(subject).to eq "#{begin_station},#{end_station},#{average_time}"
     end
   end
 end

@@ -24,7 +24,11 @@ class UndergroundSystem
   end
 
   def get_average_time(start_station, end_station)
-    travel_repository.get_average_time_for_stations(start_station, end_station)
+    [
+      start_station,
+      end_station,
+      travel_repository.get_average_time_for_stations(start_station, end_station)
+    ].join(',')
   end
 
   private
