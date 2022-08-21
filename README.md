@@ -69,3 +69,18 @@ Paradise,Cambridge,14.0
 Leyton,Waterloo,11.0
 Leyton,Waterloo,12.0
 ```
+
+## HOW TO USE:
+
+IMPORTANT: run all commands from `tech-tests-master` directory!
+
+To setup the project simply run `./setup`. It will install the gems and setup the database for regular usage and specs.
+After that it will be possible to run the projects commands.
+Examples:
+`./check_in 3 "London" 1`
+`./check_out 3 "Edinburgh" 15`
+`./get_average "London" "Edinburgh"`
+
+To run the specs:
+`rspec spec`
+
